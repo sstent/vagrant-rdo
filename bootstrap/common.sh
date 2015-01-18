@@ -4,9 +4,11 @@
 
 # Setup up appropriate repos
 yum -y remove puppetlabs-release
+
 yum -y install ${RDO_RPM}
 yum -y install ${EPEL_RPM}
-
+yum -y install centos-release-SCL
+yum -y install ruby193-rubygem-sqlite3.x86_64
 #
 # intall useful config mgmt tools
 #
