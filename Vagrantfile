@@ -13,13 +13,6 @@ Vagrant.configure('2') do |config|
     override.vm.box_url = 'http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-puppet.box'
   end
 
-  # Puppet Labs CentOS 6.4 for VMWare Fusion
-  config.vm.provider :vmware_fusion do |fusion, override|
-    override.vm.box     = 'puppetlabs-centos-65-x64-fusion'
-    override.vm.box_url = 'http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-fusion503.box'
-  end
-
-
   #
   # Define the Foreman server
   # 
@@ -41,26 +34,20 @@ Vagrant.configure('2') do |config|
   # Define the Controller server
   # 
 
-  config.vm.define "controller", primary: true do |controller|
+  config.vm.define "controller1", primary: true do |controller|
 
-    # Forward standard ports (local only, does not run under AWS)    
     controller.vm.network :forwarded_port, guest: 80,  host: 9080, auto_correct: true
     controller.vm.network :forwarded_port, guest: 443, host: 9443, auto_correct: true
-    
     controller.vm.network :forwarded_port, guest: 5000,  host: 5000, auto_correct: true
     controller.vm.network :forwarded_port, guest: 35357,  host: 35357, auto_correct: true 
-    
     controller.vm.network :forwarded_port, guest: 9292,  host: 9292, auto_correct: true
-
     controller.vm.network :forwarded_port, guest: 8773,  host: 8773, auto_correct: true  
     controller.vm.network :forwarded_port, guest: 8774,  host: 8774, auto_correct: true  
     controller.vm.network :forwarded_port, guest: 8775,  host: 8775, auto_correct: true  
     controller.vm.network :forwarded_port, guest: 8776,  host: 8776, auto_correct: true 
     controller.vm.network :forwarded_port, guest: 8777,  host: 8777, auto_correct: true 
     controller.vm.network :forwarded_port, guest: 6080,  host: 6080, auto_correct: true 
-
     controller.vm.network :forwarded_port, guest: 9696,  host: 9696, auto_correct: true    
-
     controller.vm.network :forwarded_port, guest: 8000,  host: 8000, auto_correct: true
     controller.vm.network :forwarded_port, guest: 8004,  host: 8004, auto_correct: true
 
@@ -71,22 +58,25 @@ Vagrant.configure('2') do |config|
     controller.vm.provision :shell, :path => 'bootstrap/node.sh', :args => 'controller'
   end
 
-
-  #
-  # Define the Networker server
-  # 
-
-  config.vm.define "networker", primary: true do |networker|
-    networker.vm.network "private_network", ip: "192.168.1.4", virtualbox__intnet: "private"
-    networker.vm.provision :shell, :path => 'bootstrap/node.sh', :args => 'networker'
+  config.vm.define "controller2", primary: true do |controller|
+    controller.vm.network "private_network", ip: "192.168.1.4", virtualbox__intnet: "private"
+    controller.vm.provision :shell, :path => 'bootstrap/node.sh', :args => 'controller'
   end
+
+
+  config.vm.define "controller3", primary: true do |controller|
+    controller.vm.network "private_network", ip: "192.168.1.5", virtualbox__intnet: "private"
+    controller.vm.provision :shell, :path => 'bootstrap/node.sh', :args => 'controller'
+  end
+
+
 
   #
   # Define the Compute server
   # 
 
   config.vm.define "compute", primary: true do |compute|
-    compute.vm.network "private_network", ip: "192.168.1.5", virtualbox__intnet: "private"
+    compute.vm.network "private_network", ip: "192.168.1.6", virtualbox__intnet: "private"
     compute.vm.provision :shell, :path => 'bootstrap/node.sh', :args => 'compute'
   end
 
@@ -96,7 +86,7 @@ Vagrant.configure('2') do |config|
 
   # config.vm.define "compute2", primary: true do |compute|
 
-  #   compute2.vm.network "private_network", ip: "192.168.1.6", virtualbox__intnet: "private"
+  #   compute2.vm.network "private_network", ip: "192.168.1.7", virtualbox__intnet: "private"
   #   compute2.vm.provision :shell, :path => 'bootstrap/node.sh', :args => 'compute2'
   # end
 
